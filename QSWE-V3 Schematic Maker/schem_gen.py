@@ -262,7 +262,7 @@ class QsweMaker:
         return_side = self.generate_return_side(size_x + 2, size_z + 2)
 
         schematic = Schematic(
-            name=f"QSWE-V3 {size_x}x{size_z}",
+            name=f"QSWE-V3.1 {size_x}x{size_z}",
             author="QSWE-MakerByAttila",
             regions={
                 "Trenches": trenches_outline,
@@ -274,7 +274,7 @@ class QsweMaker:
             lm_subversion=1,  # Litematica subversion 1
         )
 
-        schematic.save(f"QSWE-V3 {size_x}x{size_z}.litematic")
+        schematic.save(f"QSWE-V3.1 {size_x}x{size_z}.litematic")
 
 
 def sizes(args):

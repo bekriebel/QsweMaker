@@ -7,7 +7,7 @@ Schematic maker &amp; [smooth floor guide](https://github.com/1attila/QsweMaker/
 > The schematics generated always have Main station in -z and Return in +z
 ## UI Mode
 
-Recomended. It's: `QsweMaker-V3.exe`
+Recomended. It's: `QsweMaker-V3.1.exe`
 
 ### Get exact sizes
 - Enter the size that you want

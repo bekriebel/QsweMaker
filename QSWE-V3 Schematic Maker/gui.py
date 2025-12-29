@@ -165,7 +165,7 @@ class QsweGUI(QWidget):
 
             self.label_status.setText("Generating schematic...")
             self.qswe_maker.generate_schematic(x, z)
-            self.label_status.setText(f"Saved: QSWE-V3 {x}x{z}.litematic")
+            self.label_status.setText(f"Saved: QSWE-V3.1 {x}x{z}.litematic")
 
         except Exception as e:
             self.error(f"Error: {e}")
@@ -183,4 +183,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
