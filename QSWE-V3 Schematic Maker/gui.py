@@ -1,4 +1,12 @@
-from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QLineEdit, QGridLayout, QMessageBox
+from PyQt6.QtWidgets import (
+    QApplication,
+    QWidget,
+    QLabel,
+    QPushButton,
+    QLineEdit,
+    QGridLayout,
+    QMessageBox,
+)
 from PyQt6.QtGui import QIntValidator
 
 import sys
@@ -20,9 +28,7 @@ class QsweGUI(QWidget):
     label_height: QLabel
     label_status: QLabel
 
-
     def __init__(self):
-
         super().__init__()
 
         self.setWindowTitle("QSWE Schematic Maker")
@@ -59,27 +65,25 @@ class QsweGUI(QWidget):
         layout = QGridLayout()
 
         layout.addWidget(QLabel("X Size:"), 0, 0)
-        layout.addWidget(self.input_x,      0, 1)
+        layout.addWidget(self.input_x, 0, 1)
         layout.addWidget(QLabel("Z Size:"), 1, 0)
-        layout.addWidget(self.input_z,      1, 1)
-        layout.addWidget(btn_calc_sizes,    0, 2)
-        layout.addWidget(btn_generate,      1, 2)
+        layout.addWidget(self.input_z, 1, 1)
+        layout.addWidget(btn_calc_sizes, 0, 2)
+        layout.addWidget(btn_generate, 1, 2)
         layout.addWidget(self.label_result, 2, 0, 1, 3)
 
         layout.addWidget(QLabel("Start Y:"), 3, 0)
-        layout.addWidget(self.input_start,   3, 1)
-        layout.addWidget(QLabel("End Y:"),   4, 0)
-        layout.addWidget(self.input_end,     4, 1)
-        layout.addWidget(btn_calc_height,    3, 2, 2, 1)
-        layout.addWidget(self.label_height,  5, 0, 1, 3)
+        layout.addWidget(self.input_start, 3, 1)
+        layout.addWidget(QLabel("End Y:"), 4, 0)
+        layout.addWidget(self.input_end, 4, 1)
+        layout.addWidget(btn_calc_height, 3, 2, 2, 1)
+        layout.addWidget(self.label_height, 5, 0, 1, 3)
 
-        layout.addWidget(self.label_status, 7, 0, 1 ,3)
+        layout.addWidget(self.label_status, 7, 0, 1, 3)
 
         self.setLayout(layout)
-    
 
     def calculate_sizes(self):
-
         try:
             x = int(self.input_x.text().strip())
             z = int(self.input_z.text().strip())
@@ -92,7 +96,7 @@ class QsweGUI(QWidget):
 
             if dx > 0:
                 xs += f" (+{dx})"
-        
+
             if dz > 0:
                 zs += f" (+{dz})"
 
@@ -104,12 +108,9 @@ class QsweGUI(QWidget):
 
         except ValueError:
             self.error("Invalid size inputs")
-        
 
     def calculate_height(self):
-
         try:
-
             start = int(self.input_start.text().strip())
             end = int(self.input_end.text().strip())
 
@@ -119,19 +120,15 @@ class QsweGUI(QWidget):
 
         except ValueError:
             self.error("Invalid height inputs")
-        
 
     def generate_schematic(self):
-
         try:
-
             x = int(self.input_x.text().strip())
             z = int(self.input_z.text().strip())
 
             rigth_x, rigth_z = QsweMaker.calculate_sizes(x, z)
 
             if rigth_x != x or rigth_z != z:
-
                 dx = rigth_x - x
                 dz = rigth_z - z
                 xs = str(rigth_x)
@@ -139,7 +136,7 @@ class QsweGUI(QWidget):
 
                 if dx > 0:
                     xs += f" (+{dx})"
-        
+
                 if dz > 0:
                     zs += f" (+{dz})"
 
@@ -154,7 +151,9 @@ class QsweGUI(QWidget):
                     "Do you want to continue with these sizes?"
                 )
 
-                msg.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+                msg.setStandardButtons(
+                    QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+                )
                 result = msg.exec()
 
                 if result != QMessageBox.StandardButton.Yes:
@@ -163,7 +162,6 @@ class QsweGUI(QWidget):
 
                 else:
                     x, z = rigth_x, rigth_z
-                
 
             self.label_status.setText("Generating schematic...")
             self.qswe_maker.generate_schematic(x, z)
@@ -172,13 +170,11 @@ class QsweGUI(QWidget):
         except Exception as e:
             self.error(f"Error: {e}")
 
-
     def error(self, msg):
         QMessageBox.critical(self, "Error", msg)
 
 
 def main():
-
     app = QApplication(sys.argv)
     window = QsweGUI()
     window.show()
@@ -187,3 +183,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
