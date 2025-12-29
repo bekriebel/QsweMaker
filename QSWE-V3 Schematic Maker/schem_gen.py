@@ -2,8 +2,9 @@ from typing import Tuple
 import argparse
 import sys
 import os
+import copy
 
-from litemapy import Schematic, Region, BlockState
+from litemapy import Schematic, Region, BlockState, Entity, TileEntity
 
 
 MIN_SIZE_X = 18
@@ -37,11 +38,63 @@ def concatenate_regions(
         for bx, by, bz in reg1.block_positions():
             reg[bx, by, bz] = reg1[bx, by, bz]
 
+        # Copy entities from reg1
+        for entity in reg1.entities:
+            new_entity = Entity(entity.id)
+            new_entity.rotation = entity.rotation
+            new_entity.motion = entity.motion
+            new_entity.data = copy.deepcopy(entity.data)
+            new_entity.position = entity.position
+            reg.entities.append(new_entity)
+
+        # Copy tile entities from reg1
+        for tile_entity in reg1.tile_entities:
+            new_data = copy.deepcopy(tile_entity.data)
+            new_tile_entity = TileEntity(new_data)
+            new_tile_entity.position = tile_entity.position
+            reg.tile_entities.append(new_tile_entity)
     else:
         reg = reg1
 
     for bx, by, bz in reg2.block_positions():
         reg[bx + x, by + y, bz + z] = reg2[bx, by, bz]
+
+    # Copy entities from reg2 with position offset
+    for entity in reg2.entities:
+        # Create a copy of the entity with adjusted position
+
+        new_entity = Entity(entity.id)
+        # Deep copy properties to avoid sharing references
+        new_entity.rotation = entity.rotation
+        new_entity.motion = entity.motion
+        new_entity.data = copy.deepcopy(entity.data)
+        # Set position AFTER copying data (data contains Pos which would overwrite)
+        new_entity.position = (
+            entity.position[0] + x,
+            entity.position[1] + y,
+            entity.position[2] + z,
+        )
+        reg.entities.append(new_entity)
+
+    # Copy tile entities from reg2 with position offset
+    for tile_entity in reg2.tile_entities:
+        # Create a copy of the tile entity with adjusted position
+        new_data = copy.deepcopy(tile_entity.data)
+        new_tile_entity = TileEntity(new_data)
+
+        # Tile entities use data coordinates, not iteration coordinates
+        # For regions with negative dimensions, the offset doesn't apply
+        # because data coordinates remain the same regardless of iteration direction
+        te_offset_x = 0 if reg2.width < 0 else x
+        te_offset_y = 0 if reg2.height < 0 else y
+        te_offset_z = 0 if reg2.length < 0 else z
+
+        new_tile_entity.position = (
+            tile_entity.position[0] + te_offset_x,
+            tile_entity.position[1] + te_offset_y,
+            tile_entity.position[2] + te_offset_z,
+        )
+        reg.tile_entities.append(new_tile_entity)
 
     return reg
 
@@ -216,6 +269,9 @@ class QsweMaker:
                 "Main": main_side,
                 "Return": return_side,
             },
+            mc_version=3953,  # Minecraft 1.20.4
+            lm_version=7,  # Litematica version 7
+            lm_subversion=1,  # Litematica subversion 1
         )
 
         schematic.save(f"QSWE-V3 {size_x}x{size_z}.litematic")
@@ -307,4 +363,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
